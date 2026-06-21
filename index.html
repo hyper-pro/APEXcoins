@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ApexCoins - Premium Online Currency Platform</title>
+  <link rel="icon" type="image/png" href="icon.png">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Background Blur Blobs for Aesthetics -->
+  <div class="blur-bg">
+    <div class="blob blob-purple"></div>
+    <div class="blob blob-cyan"></div>
+    <div class="blob blob-indigo"></div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Loading Overlay -->
+  <div id="loading-screen" class="loading-screen hidden">
+    <div class="spinner-container">
+      <div class="glow-spinner"></div>
+      <p class="loading-text">Connecting to Apex Network...</p>
+    </div>
+  </div>
+
+  <!-- AUTHENTICATION SCREEN -->
+  <div id="auth-screen" class="auth-screen hidden">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="logo-container">
+          <i data-lucide="coins" class="logo-icon"></i>
+          <span class="logo-text">ApexCoins</span>
+        </div>
+        <h2 id="auth-title">Welcome to the Future of Currency</h2>
+        <p id="auth-subtitle">Create an account or sign in to start sharing coins.</p>
+      </div>
+
+      <!-- Login Form -->
+      <form id="login-form" class="auth-form">
+        <div class="form-group">
+          <label for="login-email"><i data-lucide="mail"></i> Email Address</label>
+          <input type="email" id="login-email" required placeholder="name@example.com" autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label for="login-password"><i data-lucide="lock"></i> Password</label>
+          <input type="password" id="login-password" required placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">
+          <span>Sign In</span>
+          <i data-lucide="arrow-right"></i>
+        </button>
+        <p class="auth-switch">Don't have an account? <a href="#" id="go-to-register">Register here</a></p>
+      </form>
+
+      <!-- Register Form -->
+      <form id="register-form" class="auth-form hidden">
+        <div class="form-group">
+          <label for="register-username"><i data-lucide="user"></i> Unique Username</label>
+          <input type="text" id="register-username" required placeholder="e.g. apex_trader" autocomplete="username">
+          <span class="input-hint">Usernames are unique and used for coin transfers.</span>
+        </div>
+        <div class="form-group">
+          <label for="register-email"><i data-lucide="mail"></i> Email Address</label>
+          <input type="email" id="register-email" required placeholder="name@example.com" autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label for="register-password"><i data-lucide="lock"></i> Password</label>
+          <input type="password" id="register-password" required placeholder="Minimum 6 characters" autocomplete="new-password" minlength="6">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">
+          <span>Create Account</span>
+          <i data-lucide="user-plus"></i>
+        </button>
+        <p class="auth-switch">Already have an account? <a href="#" id="go-to-login">Sign In here</a></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- MAIN APP PLATFORM -->
+  <div id="app-screen" class="app-screen hidden">
+    <!-- Sidebar Overlay Mask for Mobile -->
+    <div class="sidebar-overlay hidden" id="sidebar-overlay"></div>
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo-container">
+          <i data-lucide="coins" class="logo-icon"></i>
+          <span class="logo-text">ApexCoins</span>
+        </div>
+        <button id="mobile-menu-close" class="btn-mobile-close" title="Close Menu">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+
+      <nav class="sidebar-menu">
+        <button class="nav-item active" data-tab="dashboard">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-item" data-tab="transfer">
+          <i data-lucide="send"></i>
+          <span>Transfer Coins</span>
+        </button>
+        <button class="nav-item" data-tab="contacts-settings">
+          <i data-lucide="settings"></i>
+          <span>Contacts & Settings</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="current-user-profile">
+          <img id="sidebar-user-avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80" alt="Avatar" class="avatar">
+          <div class="user-info">
+            <span id="sidebar-user-name" class="username">username</span>
+            <span id="sidebar-user-role" class="role">User</span>
+          </div>
+        </div>
+        <button id="btn-logout" class="btn btn-logout" title="Log Out">
+          <i data-lucide="log-out"></i>
+          <span>Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Top header bar -->
+      <header class="content-header">
+        <button id="mobile-menu-toggle" class="btn-mobile-menu" title="Open Menu">
+          <i data-lucide="menu"></i>
+        </button>
+        <div class="page-title-section">
+          <h1 id="current-page-title">Dashboard</h1>
+          <p id="current-page-subtitle">Welcome back to your wallet.</p>
+        </div>
+        <div class="header-actions">
+          <div class="balance-pill">
+            <i data-lucide="coins"></i>
+            <span id="header-balance">0</span>
+            <span class="currency-label">APX</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- TAB 1: DASHBOARD -->
+      <section id="tab-dashboard" class="tab-content">
+        <!-- Balance Card & Quick Stats Grid -->
+        <div class="dashboard-grid">
+          <!-- Balance Wallet Card -->
+          <div class="card card-wallet">
+            <div class="wallet-glow"></div>
+            <div class="wallet-header">
+              <span>Apex Vault Balance</span>
+              <i data-lucide="wallet"></i>
+            </div>
+            <div class="wallet-body">
+              <h2 class="wallet-balance"><span id="dash-balance">0</span> <span class="currency">APX</span></h2>
+              <p class="wallet-address">User: <span id="dash-username">@loading</span></p>
+            </div>
+            <div class="wallet-footer">
+              <button class="btn btn-secondary-white btn-sm" onclick="switchTab('transfer')">
+                <i data-lucide="arrow-up-right"></i> Send Coins
+              </button>
+              <button class="btn btn-secondary-white btn-sm" onclick="switchTab('contacts-settings')">
+                <i data-lucide="user"></i> Edit Profile
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Stats Cards -->
+          <div class="stats-container">
+            <div class="card card-stat">
+              <div class="stat-icon purple"><i data-lucide="arrow-up-right"></i></div>
+              <div class="stat-info">
+                <h3>Total Sent</h3>
+                <p id="stat-total-sent">0 APX</p>
+              </div>
+            </div>
+            <div class="card card-stat">
+              <div class="stat-icon cyan"><i data-lucide="arrow-down-left"></i></div>
+              <div class="stat-info">
+                <h3>Total Received</h3>
+                <p id="stat-total-received">0 APX</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Transactions Section -->
+        <div class="card margin-top-lg">
+          <div class="card-header">
+            <h3>Recent Activity</h3>
+            <button class="btn btn-link btn-sm" onclick="switchTab('transfer')">View all logs</button>
+          </div>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Counterparty</th>
+                  <th>Amount</th>
+                  <th>Date & Time</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="dashboard-tx-table">
+                <tr>
+                  <td colspan="5" class="text-center text-muted">No transactions found. Make your first transfer!</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: TRANSFER -->
+      <section id="tab-transfer" class="tab-content hidden">
+        <div class="transfer-grid">
+          <!-- Transfer Form Card -->
+          <div class="card">
+            <div class="card-header">
+              <h3>Transfer Coins Instantly</h3>
+            </div>
+            <form id="transfer-form" class="transfer-form">
+              <div class="form-group select-recipient-group">
+                <label for="transfer-recipient"><i data-lucide="user"></i> Recipient Username</label>
+                <div class="input-with-button">
+                  <input type="text" id="transfer-recipient" required placeholder="Type username..." autocomplete="off">
+                  <button type="button" id="btn-save-recipient-shortcut" class="btn btn-secondary btn-icon-only" title="Save this contact" style="display:none;">
+                    <i data-lucide="user-plus"></i>
+                  </button>
+                </div>
+                <!-- Suggestions Dropdown -->
+                <div id="username-suggestions" class="suggestions-dropdown hidden">
+                  <div class="suggestions-header">Saved Contacts</div>
+                  <div id="suggestions-list" class="suggestions-list">
+                    <!-- Suggested usernames generated dynamically -->
+                  </div>
+                </div>
+                <span class="input-hint">Select from saved contacts or type a new registered username.</span>
+              </div>
+
+              <div class="form-group">
+                <label for="transfer-amount"><i data-lucide="dollar-sign"></i> Amount (APX)</label>
+                <div class="input-with-label">
+                  <input type="number" id="transfer-amount" required min="1" placeholder="0">
+                  <span class="input-suffix">APX</span>
+                </div>
+                <span class="input-hint">Your available balance: <strong id="transfer-available-balance">0</strong> APX</span>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-block margin-top-md">
+                <span>Confirm & Send Coins</span>
+                <i data-lucide="send"></i>
+              </button>
+            </form>
+          </div>
+
+          <!-- Transaction Logs Card -->
+          <div class="card">
+            <div class="card-header">
+              <h3>Your Transaction History</h3>
+            </div>
+            <div class="table-responsive max-height-logs">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Counterparty</th>
+                    <th>Amount</th>
+                    <th>Date & Time</th>
+                  </tr>
+                </thead>
+                <tbody id="user-tx-logs-table">
+                  <tr>
+                    <td colspan="4" class="text-center text-muted">No transactions logged yet.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: CONTACTS & SETTINGS -->
+      <section id="tab-contacts-settings" class="tab-content hidden">
+        <div class="settings-grid">
+          <!-- Profile Settings -->
+          <div class="card">
+            <div class="card-header">
+              <h3>Profile Customization</h3>
+            </div>
+            <div class="profile-edit-container">
+              <!-- Avatar Preview -->
+              <div class="avatar-upload-wrapper">
+                <div id="settings-avatar-display" class="avatar-display-wrapper">
+                  <img id="settings-avatar-preview" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80" alt="Avatar" class="avatar-large">
+                </div>
+                <!-- Toggle buttons for image vs emoji -->
+                <div class="avatar-mode-btns">
+                  <label for="avatar-file-input" class="avatar-upload-btn" title="Upload Image">
+                    <i data-lucide="camera"></i>
+                  </label>
+                  <button type="button" class="avatar-upload-btn" id="btn-open-emoji-picker" title="Choose Emoji">
+                    😀
+                  </button>
+                </div>
+                <input type="file" id="avatar-file-input" accept="image/*" class="hidden">
+              </div>
+              <div class="avatar-upload-status text-muted text-sm margin-top-xs" id="avatar-upload-status">Click 📷 to upload image or 😀 to pick an emoji</div>
+
+              <form id="profile-settings-form" class="profile-settings-form margin-top-md">
+                <div class="form-group">
+                  <label for="settings-username"><i data-lucide="user"></i> Username</label>
+                  <input type="text" id="settings-username" required placeholder="New username">
+                </div>
+                <div class="form-group">
+                  <label for="settings-email"><i data-lucide="mail"></i> Email Address</label>
+                  <input type="email" id="settings-email" disabled placeholder="user@example.com">
+                  <span class="input-hint">Email address cannot be changed.</span>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">
+                  <span>Save Profile Updates</span>
+                  <i data-lucide="save"></i>
+                </button>
+              </form>
+            </div>
+          </div>
+
+
+          <!-- Contacts Management -->
+          <div class="card">
+            <div class="card-header">
+              <h3>Saved Contacts</h3>
+            </div>
+            <div class="contacts-management-container">
+              <form id="add-contact-form" class="inline-form">
+                <div class="form-group flex-grow">
+                  <input type="text" id="new-contact-username" required placeholder="Type username to save...">
+                </div>
+                <button type="submit" class="btn btn-primary btn-icon-only" title="Add Contact">
+                  <i data-lucide="plus"></i>
+                </button>
+              </form>
+              <span class="input-hint">Add users to quick-list for easy transfers.</span>
+
+              <div class="contacts-list-container margin-top-md">
+                <ul id="saved-contacts-ul" class="saved-contacts-list">
+                  <li class="empty-list-item text-muted">No saved contacts yet.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- EMOJI PICKER MODAL -->
+  <div id="emoji-picker-modal" class="modal-overlay hidden">
+    <div class="modal-card emoji-modal-card">
+      <div class="modal-header">
+        <h3>Choose Your Avatar Emoji</h3>
+        <button class="btn-close-modal" id="emoji-picker-close"><i data-lucide="x"></i></button>
+      </div>
+      <div class="emoji-search-wrapper">
+        <input type="text" id="emoji-search" placeholder="🔍 Search emojis..." class="emoji-search-input">
+      </div>
+      <div class="emoji-grid" id="emoji-grid">
+        <!-- Emojis populated by JS -->
+      </div>
+      <div class="custom-emoji-wrapper">
+        <div class="custom-emoji-label">Or type/paste any emoji or character:</div>
+        <div class="custom-emoji-row">
+          <input type="text" id="custom-emoji-input" placeholder="🎯" class="custom-emoji-input" maxlength="2">
+          <button type="button" class="btn btn-primary" id="btn-submit-custom-emoji">
+            <span>Save</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase Compat SDKs (works with file:// double-click) -->
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <!-- Main Application Script -->
+  <script src="app.js"></script>
+</body>
+</html>
