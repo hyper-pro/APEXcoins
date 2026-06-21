@@ -1,0 +1,55 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if the user is authenticated
+    function isLoggedIn() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check if the user is an Administrator
+    function isAdmin() {
+      return isLoggedIn() && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+    }
+
+    // Rules for user profiles
+    match /users/{userId} {
+      // Anyone can read profiles (necessary to check if username is taken during registration, or to find transfer recipients)
+      allow read: if true;
+      
+      // Creating a user profile is allowed on initial registration
+      allow create: if isLoggedIn() && request.auth.uid == userId;
+      
+      // Updating user details:
+      // - Regular users can update their profile (username, profilePic, savedContacts) and send coins (updating balance)
+      // - Regular users are strictly prevented from modifying their admin privileges (isAdmin)
+      // - Admins have full access to update any user document
+      allow update: if isLoggedIn() && (
+        (request.auth.uid == userId && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['isAdmin']))
+        || isAdmin()
+      );
+      
+      // Only admins are authorized to delete profiles
+      allow delete: if isAdmin();
+    }
+    
+    // Rules for money transfers
+    match /transfers/{transferId} {
+      // Users can see transactions in which they are either sender or recipient
+      // Admins are permitted to view all transaction records
+      allow read: if isLoggedIn() && (
+        resource.data.senderUid == request.auth.uid || 
+        resource.data.receiverUid == request.auth.uid || 
+        isAdmin()
+      );
+      
+      // Creating transactions is allowed for logged-in users who are designated as the sender
+      allow create: if isLoggedIn() && request.resource.data.senderUid == request.auth.uid;
+      
+      // Transactions are immutable logs and cannot be updated or deleted by anyone
+      allow update, delete: if false;
+    }
+  }
+}

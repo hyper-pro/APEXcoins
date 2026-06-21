@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ApexCoins - Administrative Control Panel</title>
+  <link rel="icon" type="image/png" href="icon.png">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Background Blur Blobs for Aesthetics -->
+  <div class="blur-bg">
+    <div class="blob blob-purple"></div>
+    <div class="blob blob-cyan"></div>
+    <div class="blob blob-indigo"></div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+
+  <!-- MAIN APP PLATFORM (ADMIN ONLY) -->
+  <div id="app-screen" class="app-screen">
+    <!-- Sidebar Overlay Mask for Mobile -->
+    <div class="sidebar-overlay hidden" id="sidebar-overlay"></div>
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo-container">
+          <i data-lucide="shield-check" class="logo-icon text-success"></i>
+          <span class="logo-text">ApexAdmin</span>
+        </div>
+        <button id="mobile-menu-close" class="btn-mobile-close" title="Close Menu">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+
+      <nav class="sidebar-menu">
+        <button class="nav-item active" data-tab="admin-users">
+          <i data-lucide="users"></i>
+          <span>Users Database</span>
+        </button>
+        <button class="nav-item" data-tab="admin-logs">
+          <i data-lucide="history"></i>
+          <span>Global Transactions</span>
+        </button>
+        <a href="index.html" class="nav-item" style="text-decoration: none; display: flex; align-items: center;">
+          <i data-lucide="arrow-left"></i>
+          <span>User Platform</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="current-user-profile">
+          <img id="sidebar-user-avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80" alt="Avatar" class="avatar">
+          <div class="user-info">
+            <span id="sidebar-user-name" class="username">admin</span>
+            <span id="sidebar-user-role" class="role">Administrator</span>
+          </div>
+        </div>
+        <button id="btn-logout" class="btn btn-logout" title="Log Out">
+          <i data-lucide="log-out"></i>
+          <span>Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Top header bar -->
+      <header class="content-header">
+        <button id="mobile-menu-toggle" class="btn-mobile-menu" title="Open Menu">
+          <i data-lucide="menu"></i>
+        </button>
+        <div class="page-title-section">
+          <h1 id="current-page-title">Admin Dashboard</h1>
+          <p id="current-page-subtitle">Secure system oversight and user management.</p>
+        </div>
+      </header>
+
+      <!-- TAB 1: USERS DATABASE -->
+      <section id="tab-admin-users" class="tab-content">
+        <!-- Admin Dashboard Stats -->
+        <div class="admin-stats-grid">
+          <div class="card card-stat">
+            <div class="stat-icon purple"><i data-lucide="banknote"></i></div>
+            <div class="stat-info">
+              <h3>Total Coins Circulating</h3>
+              <p id="admin-stat-total-coins">0 APX</p>
+            </div>
+          </div>
+          <div class="card card-stat">
+            <div class="stat-icon cyan"><i data-lucide="users"></i></div>
+            <div class="stat-info">
+              <h3>Registered Users</h3>
+              <p id="admin-stat-total-users">0 Users</p>
+            </div>
+          </div>
+          <div class="card card-stat">
+            <div class="stat-icon yellow"><i data-lucide="history"></i></div>
+            <div class="stat-info">
+              <h3>Total Transactions</h3>
+              <p id="admin-stat-total-txs">0 Tx</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card margin-top-lg">
+          <div class="table-actions">
+            <div class="search-box">
+              <i data-lucide="search"></i>
+              <input type="text" id="admin-user-search" placeholder="Search by username or email...">
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Avatar</th>
+                  <th>Username</th>
+                  <th>Email</th>
+                  <th>Coins (APX)</th>
+                  <th>Role</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="admin-users-table-body">
+                <tr>
+                  <td colspan="6" class="text-center text-muted">Loading user database...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: GLOBAL TRANSACTION LOGS -->
+      <section id="tab-admin-logs" class="tab-content hidden">
+        <div class="card">
+          <div class="table-actions">
+            <div class="search-box">
+              <i data-lucide="search"></i>
+              <input type="text" id="admin-log-search" placeholder="Search by sender/receiver username...">
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Date & Time</th>
+                  <th>Sender</th>
+                  <th>Receiver</th>
+                  <th>Amount</th>
+                  <th>ID</th>
+                </tr>
+              </thead>
+              <tbody id="admin-logs-table-body">
+                <tr>
+                  <td colspan="5" class="text-center text-muted">Loading transaction logs...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ADMIN: EDIT USER MODAL -->
+  <div id="admin-edit-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Edit User Account</h3>
+        <button class="btn-close-modal" id="admin-edit-modal-close"><i data-lucide="x"></i></button>
+      </div>
+      <form id="admin-edit-user-form" class="modal-form">
+        <input type="hidden" id="edit-user-id">
+        <input type="hidden" id="edit-user-email">
+        
+        <div class="form-group">
+          <label for="edit-user-username"><i data-lucide="user"></i> Username</label>
+          <input type="text" id="edit-user-username" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="edit-user-coins"><i data-lucide="dollar-sign"></i> Balance (APX)</label>
+          <input type="number" id="edit-user-coins" required min="0">
+        </div>
+
+        <div class="form-group checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="edit-user-is-admin">
+            <span>Grant Administrator Privileges</span>
+          </label>
+        </div>
+
+        <div class="form-group" style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+          <label><i data-lucide="lock"></i> Account Password Reset</label>
+          <p class="text-muted text-sm" style="margin-bottom: 10px;">For safety reasons, passwords cannot be set directly. Send a secure password reset email instead.</p>
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-send-password-reset" style="width: auto;">
+            <i data-lucide="mail"></i> Send Password Reset Email
+          </button>
+        </div>
+
+        <div class="modal-footer" style="margin-top: 20px;">
+          <button type="button" class="btn btn-secondary" id="admin-edit-modal-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Firebase Compat SDKs (works with file:// double-click) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <!-- Main Admin Script -->
+  <script src="admin.js"></script>
+</body>
+</html>
